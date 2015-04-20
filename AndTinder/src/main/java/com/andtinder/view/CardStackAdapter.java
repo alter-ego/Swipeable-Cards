@@ -9,6 +9,7 @@ import android.widget.FrameLayout;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 public abstract class CardStackAdapter extends BaseCardStackAdapter {
 	private final Context mContext;
@@ -77,6 +78,13 @@ public abstract class CardStackAdapter extends BaseCardStackAdapter {
 		}
 		notifyDataSetChanged();
 	}
+
+        public void addAll(List<Object> items) {
+	        synchronized (mLock) {
+	                mData.addAll(items);
+	        }
+	        notifyDataSetChanged();
+        }
 
 	public Object pop() {
 	    Object model;

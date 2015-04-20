@@ -1,7 +1,7 @@
 package com.andtinder.view;
 
 import com.andtinder.R;
-import com.andtinder.model.CardModel;
+import com.andtinder.model.BaseCardModel;
 import com.andtinder.model.Orientations.Orientation;
 
 import android.animation.Animator;
@@ -348,11 +348,15 @@ public class CardContainer extends AdapterView<ListAdapter> {
             case MotionEvent.ACTION_DOWN:
                 mTopCard.getHitRect(childRect);
 
-                CardModel cardModel = (CardModel)getAdapter().getItem(getChildCount()-1);
+                Object model = getAdapter().getItem(getChildCount() - 1);
+                if (model instanceof BaseCardModel) {
+                    BaseCardModel baseCardModel = (BaseCardModel) model;
 
-                if (cardModel.getOnCardClickListener() != null) {
-                    cardModel.getOnCardClickListener().OnClickListener();
+                    if (baseCardModel.getOnCardClickListener() != null) {
+                        baseCardModel.getOnCardClickListener().OnClickListener();
+                    }
                 }
+
                 pointerIndex = event.getActionIndex();
                 x = event.getX(pointerIndex);
                 y = event.getY(pointerIndex);
@@ -447,16 +451,19 @@ public class CardContainer extends AdapterView<ListAdapter> {
                 duration = Math.min(500, duration);
 
                 mTopCard = getChildAt(getChildCount() - 2);
-                CardModel cardModel = (CardModel)getAdapter().getItem(getChildCount() - 1);
-
                 if(mTopCard != null)
                     mTopCard.setLayerType(LAYER_TYPE_HARDWARE, null);
 
-                if (cardModel.getOnCardDismissedListener() != null) {
-                    if ( targetX > 0 ) {
-                        cardModel.getOnCardDismissedListener().onLike();
-                    } else {
-                        cardModel.getOnCardDismissedListener().onDislike();
+                Object model = getAdapter().getItem(getChildCount() - 1);
+                if (model instanceof BaseCardModel) {
+                    BaseCardModel baseCardModel = (BaseCardModel) model;
+
+                    if (baseCardModel.getOnCardDismissedListener() != null) {
+                        if (targetX > 0) {
+                            baseCardModel.getOnCardDismissedListener().onLike();
+                        } else {
+                            baseCardModel.getOnCardDismissedListener().onDislike();
+                        }
                     }
                 }
 

@@ -20,6 +20,7 @@ public abstract class CardStackAdapter extends BaseCardStackAdapter {
 	 */
 	private final Object mLock = new Object();
 	private ArrayList<Object> mData;
+        private int mWrapperBackgroundResource = R.drawable.card_bg;
 
 	public CardStackAdapter(Context context) {
 		mContext = context;
@@ -39,7 +40,7 @@ public abstract class CardStackAdapter extends BaseCardStackAdapter {
 		View convertedCardView;
 		if (wrapper == null) {
 			wrapper = new FrameLayout(mContext);
-			wrapper.setBackgroundResource(R.drawable.card_bg);
+			wrapper.setBackgroundResource(mWrapperBackgroundResource);
 			if (shouldFillCardBackground()) {
 				innerWrapper = new FrameLayout(mContext);
 				innerWrapper.setBackgroundColor(mContext.getResources().getColor(R.color.card_bg));
@@ -119,4 +120,8 @@ public abstract class CardStackAdapter extends BaseCardStackAdapter {
 	public Context getContext() {
 		return mContext;
 	}
+
+        public void setWrapperBackgroundResource(int resourceId) {
+                mWrapperBackgroundResource = resourceId;
+        }
 }

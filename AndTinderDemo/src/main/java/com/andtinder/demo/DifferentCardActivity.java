@@ -41,6 +41,7 @@ public class DifferentCardActivity extends Activity {
 
         BindableCardStackAdapter adapter = new BindableCardStackAdapter(this);
         adapter.registerAdapterDataBinder(new DifferentCardBinder(this));
+        adapter.setWrapperBackgroundResource(android.R.color.white);
 
         adapter.add(new DifferentCard("Title1", "Description goes here"));
         adapter.add(new DifferentCard("Title2", "Description goes here"));

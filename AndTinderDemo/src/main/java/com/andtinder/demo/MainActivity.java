@@ -44,6 +44,7 @@ public class MainActivity extends Activity {
 
         mCardContainer = (CardContainer) findViewById(R.id.layoutview);
 
+	SimpleCardStackAdapter adapter = new SimpleCardStackAdapter(this);
         Resources r = getResources();
 
 		adapter.add(new CardModel("Title1", "Description goes here", r.getDrawable(R.drawable.picture1)));

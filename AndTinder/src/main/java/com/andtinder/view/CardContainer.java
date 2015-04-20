@@ -2,6 +2,7 @@ package com.andtinder.view;
 
 import com.andtinder.R;
 import com.andtinder.model.BaseCardModel;
+import com.andtinder.model.CardModel;
 import com.andtinder.model.Orientations.Orientation;
 
 import android.animation.Animator;
@@ -448,47 +449,59 @@ public class CardContainer extends AdapterView<ListAdapter> {
                     duration += 100;
                 }
 
-                duration = Math.min(500, duration);
-
-                mTopCard = getChildAt(getChildCount() - 2);
-                if(mTopCard != null)
-                    mTopCard.setLayerType(LAYER_TYPE_HARDWARE, null);
-
-                Object model = getAdapter().getItem(getChildCount() - 1);
-                if (model instanceof BaseCardModel) {
-                    BaseCardModel baseCardModel = (BaseCardModel) model;
-
-                    if (baseCardModel.getOnCardDismissedListener() != null) {
-                        if (targetX > 0) {
-                            baseCardModel.getOnCardDismissedListener().onLike();
-                        } else {
-                            baseCardModel.getOnCardDismissedListener().onDislike();
-                        }
-                    }
-                }
-
-                topCard.animate()
-                        .setDuration(duration)
-                        .alpha(.75f)
-                        .setInterpolator(new LinearInterpolator())
-                        .x(targetX)
-                        .y(targetY)
-                        .rotation(Math.copySign(45, velocityX))
-                        .setListener(new AnimatorListenerAdapter() {
-                            @Override
-                            public void onAnimationEnd(Animator animation) {
-                                removeViewInLayout(topCard);
-                                ensureFull();
-                            }
-
-                            @Override
-                            public void onAnimationCancel(Animator animation) {
-                                onAnimationEnd(animation);
-                            }
-                        });
+                likeOrDislike(targetX, targetY, Math.min(500, duration));
                 return true;
             } else
                 return false;
         }
+    }
+
+    private void likeOrDislike(float targetX, float targetY, long duration) {
+        final View topCard = mTopCard;
+        mTopCard = getChildAt(getChildCount() - 2);
+
+        if (mTopCard != null)
+            mTopCard.setLayerType(LAYER_TYPE_HARDWARE, null);
+
+        Object model = getAdapter().getItem(getChildCount() - 1);
+        if (model instanceof BaseCardModel) {
+            BaseCardModel baseCardModel = (BaseCardModel) model;
+
+            if (baseCardModel.getOnCardDismissedListener() != null) {
+                if (targetX > 0) {
+                    baseCardModel.getOnCardDismissedListener().onLike();
+                } else {
+                    baseCardModel.getOnCardDismissedListener().onDislike();
+                }
+            }
+        }
+
+        topCard.animate()
+                .setDuration(duration)
+                .alpha(.75f)
+                .setInterpolator(new LinearInterpolator())
+                .x(targetX)
+                .y(targetY)
+                .rotation(Math.copySign(45, targetX))
+                .setListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        removeViewInLayout(topCard);
+                        ensureFull();
+                    }
+
+                    @Override
+                    public void onAnimationCancel(Animator animation) {
+                        onAnimationEnd(animation);
+                    }
+                });
+    }
+
+    public void like() {
+        likeOrDislike(mTopCard.getWidth(), mTopCard.getY(), 500);
+    }
+
+    public void dislike() {
+        likeOrDislike(-mTopCard.getWidth(), mTopCard.getY(), 500);
     }
 }

@@ -10,7 +10,7 @@ import android.widget.FrameLayout;
 import java.util.ArrayList;
 import java.util.Collection;
 
-public abstract class CardStackAdapter<T> extends BaseCardStackAdapter {
+public abstract class CardStackAdapter extends BaseCardStackAdapter {
 	private final Context mContext;
 
 	/**
@@ -18,16 +18,16 @@ public abstract class CardStackAdapter<T> extends BaseCardStackAdapter {
 	 * performed on the deque should be synchronized on this lock.
 	 */
 	private final Object mLock = new Object();
-	private ArrayList<T> mData;
+	private ArrayList<Object> mData;
 
 	public CardStackAdapter(Context context) {
 		mContext = context;
-		mData = new ArrayList<T>();
+		mData = new ArrayList<Object>();
 	}
 
-	public CardStackAdapter(Context context, Collection<T> items) {
+	public CardStackAdapter(Context context, Collection<Object> items) {
 		mContext = context;
-		mData = new ArrayList<T>(items);
+		mData = new ArrayList<Object>(items);
 	}
 
 	@Override
@@ -65,21 +65,21 @@ public abstract class CardStackAdapter<T> extends BaseCardStackAdapter {
 		return wrapper;
 	}
 
-	protected abstract View getCardView(int position, T model, View convertView, ViewGroup parent);
+	protected abstract View getCardView(int position, Object model, View convertView, ViewGroup parent);
 
 	public boolean shouldFillCardBackground() {
 		return true;
 	}
 
-	public void add(T item) {
+	public void add(Object item) {
 		synchronized (mLock) {
 			mData.add(item);
 		}
 		notifyDataSetChanged();
 	}
 
-	public T pop() {
-	    T model;
+	public Object pop() {
+	    Object model;
 		synchronized (mLock) {
 			model = mData.remove(mData.size() - 1);
 		}
@@ -92,7 +92,7 @@ public abstract class CardStackAdapter<T> extends BaseCardStackAdapter {
 		return getCardModel(position);
 	}
 
-	public T getCardModel(int position) {
+	public Object getCardModel(int position) {
 		synchronized (mLock) {
 			return mData.get(mData.size() - 1 - position);
 		}

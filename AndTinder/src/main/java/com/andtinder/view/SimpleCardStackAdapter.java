@@ -10,23 +10,26 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-public final class SimpleCardStackAdapter extends CardStackAdapter<CardModel> {
+public final class SimpleCardStackAdapter extends CardStackAdapter {
 
 	public SimpleCardStackAdapter(Context mContext) {
 		super(mContext);
 	}
 
 	@Override
-	public View getCardView(int position, CardModel model, View convertView, ViewGroup parent) {
+	public View getCardView(int position, Object model, View convertView, ViewGroup parent) {
+
+	    CardModel cardModel = (CardModel) model;
+
 		if(convertView == null) {
 			LayoutInflater inflater = LayoutInflater.from(getContext());
 			convertView = inflater.inflate(R.layout.std_card_inner, parent, false);
 			assert convertView != null;
 		}
 
-		((ImageView) convertView.findViewById(R.id.image)).setImageDrawable(model.getCardImageDrawable());
-		((TextView) convertView.findViewById(R.id.title)).setText(model.getTitle());
-		((TextView) convertView.findViewById(R.id.description)).setText(model.getDescription());
+		((ImageView) convertView.findViewById(R.id.image)).setImageDrawable(cardModel.getCardImageDrawable());
+		((TextView) convertView.findViewById(R.id.title)).setText(cardModel.getTitle());
+		((TextView) convertView.findViewById(R.id.description)).setText(cardModel.getDescription());
 
 		return convertView;
 	}

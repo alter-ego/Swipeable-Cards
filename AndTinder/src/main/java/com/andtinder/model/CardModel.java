@@ -17,7 +17,9 @@
 
 package com.andtinder.model;
 
-import android.content.Intent;
+import com.andtinder.interfaces.OnCardDismissedListener;
+import com.andtinder.interfaces.OnCardClickListener;
+
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
@@ -30,18 +32,9 @@ public class CardModel {
 	private Drawable cardLikeImageDrawable;
 	private Drawable cardDislikeImageDrawable;
 
-    private OnCardDimissedListener mOnCardDimissedListener = null;
+    private OnCardDismissedListener mOnCardDismissedListener = null;
 
-    private OnClickListener mOnClickListener = null;
-
-    public interface OnCardDimissedListener {
-        void onLike();
-        void onDislike();
-    }
-
-    public interface OnClickListener {
-        void OnClickListener();
-    }
+    private OnCardClickListener mOnCardClickListener = null;
 
 	public CardModel() {
 		this(null, null, (Drawable)null);
@@ -99,20 +92,20 @@ public class CardModel {
 		this.cardDislikeImageDrawable = cardDislikeImageDrawable;
 	}
 
-    public void setOnCardDimissedListener( OnCardDimissedListener listener ) {
-        this.mOnCardDimissedListener = listener;
+    public void setOnCardDismissedListener(OnCardDismissedListener listener) {
+        this.mOnCardDismissedListener = listener;
     }
 
-    public OnCardDimissedListener getOnCardDimissedListener() {
-       return this.mOnCardDimissedListener;
+    public OnCardDismissedListener getOnCardDismissedListener() {
+       return this.mOnCardDismissedListener;
     }
 
 
-    public void setOnClickListener( OnClickListener listener ) {
-        this.mOnClickListener = listener;
+    public void setOnCardClickListener(OnCardClickListener listener) {
+        this.mOnCardClickListener = listener;
     }
 
-    public OnClickListener getOnClickListener() {
-        return this.mOnClickListener;
+    public OnCardClickListener getOnCardClickListener() {
+        return this.mOnCardClickListener;
     }
 }

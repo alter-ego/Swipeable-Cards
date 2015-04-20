@@ -1,5 +1,9 @@
 package com.andtinder.view;
 
+import com.andtinder.R;
+import com.andtinder.model.CardModel;
+import com.andtinder.model.Orientations.Orientation;
+
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ObjectAnimator;
@@ -23,10 +27,6 @@ import android.view.animation.AccelerateInterpolator;
 import android.view.animation.LinearInterpolator;
 import android.widget.AdapterView;
 import android.widget.ListAdapter;
-
-import com.andtinder.R;
-import com.andtinder.model.CardModel;
-import com.andtinder.model.Orientations.Orientation;
 
 import java.util.Random;
 
@@ -350,8 +350,8 @@ public class CardContainer extends AdapterView<ListAdapter> {
 
                 CardModel cardModel = (CardModel)getAdapter().getItem(getChildCount()-1);
 
-                if (cardModel.getOnClickListener() != null) {
-                    cardModel.getOnClickListener().OnClickListener();
+                if (cardModel.getOnCardClickListener() != null) {
+                    cardModel.getOnCardClickListener().OnClickListener();
                 }
                 pointerIndex = event.getActionIndex();
                 x = event.getX(pointerIndex);
@@ -452,11 +452,11 @@ public class CardContainer extends AdapterView<ListAdapter> {
                 if(mTopCard != null)
                     mTopCard.setLayerType(LAYER_TYPE_HARDWARE, null);
 
-                if (cardModel.getOnCardDimissedListener() != null) {
+                if (cardModel.getOnCardDismissedListener() != null) {
                     if ( targetX > 0 ) {
-                        cardModel.getOnCardDimissedListener().onLike();
+                        cardModel.getOnCardDismissedListener().onLike();
                     } else {
-                        cardModel.getOnCardDimissedListener().onDislike();
+                        cardModel.getOnCardDismissedListener().onDislike();
                     }
                 }
 

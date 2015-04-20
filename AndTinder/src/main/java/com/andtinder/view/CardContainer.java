@@ -384,12 +384,13 @@ public class CardContainer extends AdapterView<ListAdapter> {
 
     @Override
     public View getSelectedView() {
-        throw new UnsupportedOperationException();
+        //DO NOTHING
+        return null;
     }
 
     @Override
     public void setSelection(int position) {
-        throw new UnsupportedOperationException();
+        //DO NOTHING
     }
 
     public int getGravity() {

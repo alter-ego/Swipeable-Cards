@@ -24,6 +24,8 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.view.Window;
 
+import java.util.ArrayList;
+
 public class DifferentCardActivity extends Activity {
 
     /**
@@ -43,11 +45,15 @@ public class DifferentCardActivity extends Activity {
         adapter.registerAdapterDataBinder(new DifferentCardBinder(this));
         adapter.setWrapperBackgroundResource(android.R.color.white);
 
-        adapter.add(new DifferentCard("Title1", "Description goes here"));
-        adapter.add(new DifferentCard("Title2", "Description goes here"));
-        adapter.add(new DifferentCard("Title3", "Description goes here"));
-        adapter.add(new DifferentCard("Title4", "Description goes here"));
+        ArrayList<Object> cards = new ArrayList<Object>();
+        cards.add(new DifferentCard("Title1", "Description goes here"));
+        cards.add(new DifferentCard("Title2", "Description goes here"));
+        cards.add(new DifferentCard("Title3", "Description goes here"));
+        cards.add(new DifferentCard("Title4", "Description goes here"));
 
+        adapter.addAll(cards);
+
+        mCardContainer.setMaxVisible(3);
         mCardContainer.setAdapter(adapter);
         mCardContainer.setOrientation(Orientations.Orientation.Ordered);
     }

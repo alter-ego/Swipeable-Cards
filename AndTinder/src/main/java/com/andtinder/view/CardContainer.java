@@ -2,7 +2,6 @@ package com.andtinder.view;
 
 import com.andtinder.R;
 import com.andtinder.model.BaseCardModel;
-import com.andtinder.model.CardModel;
 import com.andtinder.model.Orientations.Orientation;
 
 import android.animation.Animator;
@@ -35,6 +34,7 @@ public class CardContainer extends AdapterView<ListAdapter> {
     public static final int INVALID_POINTER_ID = -1;
     private int mActivePointerId = INVALID_POINTER_ID;
     private static final double DISORDERED_MAX_ROTATION_RADIANS = Math.PI / 64;
+    private static final int MAX_VISIBLE_CARDS_DEFAULT = 5;
     private int mNumberOfCards = -1;
     private final DataSetObserver mDataSetObserver = new DataSetObserver() {
         @Override
@@ -55,9 +55,8 @@ public class CardContainer extends AdapterView<ListAdapter> {
     private final Rect childRect = new Rect();
     private final Matrix mMatrix = new Matrix();
 
-
     //TODO: determine max dynamically based on device speed
-    private int mMaxVisible = 10;
+    private int mMaxVisible = MAX_VISIBLE_CARDS_DEFAULT;
     private GestureDetector mGestureDetector;
     private int mFlingSlop;
     private Orientation mOrientation;
@@ -503,5 +502,9 @@ public class CardContainer extends AdapterView<ListAdapter> {
 
     public void dislike() {
         likeOrDislike(-mTopCard.getWidth(), mTopCard.getY(), 500);
+    }
+
+    public void setMaxVisible(int maxVisible) {
+        mMaxVisible = maxVisible;
     }
 }

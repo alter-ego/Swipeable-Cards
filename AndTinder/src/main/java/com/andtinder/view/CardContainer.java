@@ -26,11 +26,10 @@ import android.view.ViewGroup;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.LinearInterpolator;
 import android.widget.AdapterView;
-import android.widget.ListAdapter;
 
 import java.util.Random;
 
-public class CardContainer extends AdapterView<ListAdapter> {
+public class CardContainer extends AdapterView<CardStackAdapter> {
     public static final int INVALID_POINTER_ID = -1;
     private int mActivePointerId = INVALID_POINTER_ID;
     private static final double DISORDERED_MAX_ROTATION_RADIANS = Math.PI / 64;
@@ -60,7 +59,7 @@ public class CardContainer extends AdapterView<ListAdapter> {
     private GestureDetector mGestureDetector;
     private int mFlingSlop;
     private Orientation mOrientation;
-    private ListAdapter mListAdapter;
+    private CardStackAdapter mListAdapter;
     private float mLastTouchX;
     private float mLastTouchY;
     private View mTopCard;
@@ -113,12 +112,12 @@ public class CardContainer extends AdapterView<ListAdapter> {
     }
 
     @Override
-    public ListAdapter getAdapter() {
+    public CardStackAdapter getAdapter() {
         return mListAdapter;
     }
 
     @Override
-    public void setAdapter(ListAdapter adapter) {
+    public void setAdapter(CardStackAdapter adapter) {
         if (mListAdapter != null)
             mListAdapter.unregisterDataSetObserver(mDataSetObserver);
 

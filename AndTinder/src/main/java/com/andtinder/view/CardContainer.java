@@ -122,17 +122,11 @@ public class CardContainer extends AdapterView<CardStackAdapter> {
             mListAdapter.unregisterDataSetObserver(mDataSetObserver);
 
         clearStack();
-        mTopCard = null;
         mListAdapter = adapter;
-        mNextAdapterPosition = 0;
         adapter.registerDataSetObserver(mDataSetObserver);
 
         ensureFull();
 
-        if (getChildCount() != 0) {
-            mTopCard = getChildAt(getChildCount() - 1);
-            mTopCard.setLayerType(LAYER_TYPE_HARDWARE, null);
-        }
         mNumberOfCards = getAdapter().getCount();
         requestLayout();
     }
@@ -150,6 +144,11 @@ public class CardContainer extends AdapterView<CardStackAdapter> {
             requestLayout();
 
             mNextAdapterPosition += 1;
+        }
+
+        if (getChildCount() != 0) {
+            mTopCard = getChildAt(getChildCount() - 1);
+            mTopCard.setLayerType(LAYER_TYPE_HARDWARE, null);
         }
     }
 
@@ -489,7 +488,7 @@ public class CardContainer extends AdapterView<CardStackAdapter> {
                     @Override
                     public void onAnimationEnd(Animator animation) {
                         removeViewInLayout(topCard);
-                        ensureFull();
+                        getAdapter().pop();
                     }
 
                     @Override

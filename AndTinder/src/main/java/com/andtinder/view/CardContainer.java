@@ -69,6 +69,9 @@ public class CardContainer extends AdapterView<ListAdapter> {
     private int mNextAdapterPosition;
     private boolean mDragging;
 
+    private int mChildWidth;
+    private int mChildHeight;
+
     public CardContainer(Context context) {
         super(context);
 
@@ -193,7 +196,6 @@ public class CardContainer extends AdapterView<ListAdapter> {
 
         int requestedWidth = getMeasuredWidth() - getPaddingLeft() - getPaddingRight();
         int requestedHeight = getMeasuredHeight() - getPaddingTop() - getPaddingBottom();
-        int childWidth, childHeight;
 
         if (mOrientation == Orientation.Disordered) {
             int R1, R2;
@@ -204,16 +206,16 @@ public class CardContainer extends AdapterView<ListAdapter> {
                 R1 = requestedWidth;
                 R2 = requestedHeight;
             }
-            childWidth = (int) ((R1 * Math.cos(DISORDERED_MAX_ROTATION_RADIANS) - R2 * Math.sin(DISORDERED_MAX_ROTATION_RADIANS)) / Math.cos(2 * DISORDERED_MAX_ROTATION_RADIANS));
-            childHeight = (int) ((R2 * Math.cos(DISORDERED_MAX_ROTATION_RADIANS) - R1 * Math.sin(DISORDERED_MAX_ROTATION_RADIANS)) / Math.cos(2 * DISORDERED_MAX_ROTATION_RADIANS));
+            mChildWidth = (int) ((R1 * Math.cos(DISORDERED_MAX_ROTATION_RADIANS) - R2 * Math.sin(DISORDERED_MAX_ROTATION_RADIANS)) / Math.cos(2 * DISORDERED_MAX_ROTATION_RADIANS));
+            mChildHeight = (int) ((R2 * Math.cos(DISORDERED_MAX_ROTATION_RADIANS) - R1 * Math.sin(DISORDERED_MAX_ROTATION_RADIANS)) / Math.cos(2 * DISORDERED_MAX_ROTATION_RADIANS));
         } else {
-            childWidth = requestedWidth;
-            childHeight = requestedHeight;
+            mChildWidth = requestedWidth;
+            mChildHeight = requestedHeight;
         }
 
         int childWidthMeasureSpec, childHeightMeasureSpec;
-        childWidthMeasureSpec = MeasureSpec.makeMeasureSpec(childWidth, MeasureSpec.AT_MOST);
-        childHeightMeasureSpec = MeasureSpec.makeMeasureSpec(childHeight, MeasureSpec.AT_MOST);
+        childWidthMeasureSpec = MeasureSpec.makeMeasureSpec(mChildWidth, MeasureSpec.AT_MOST);
+        childHeightMeasureSpec = MeasureSpec.makeMeasureSpec(mChildHeight, MeasureSpec.AT_MOST);
 
         for (int i = 0; i < getChildCount(); i++) {
             View child = getChildAt(i);
@@ -497,11 +499,11 @@ public class CardContainer extends AdapterView<ListAdapter> {
     }
 
     public void like() {
-        likeOrDislike(mTopCard.getWidth(), mTopCard.getY(), 500);
+        likeOrDislike(mChildWidth, 0, 500);
     }
 
     public void dislike() {
-        likeOrDislike(-mTopCard.getWidth(), mTopCard.getY(), 500);
+        likeOrDislike(-mChildWidth, 0, 500);
     }
 
     public void setMaxVisible(int maxVisible) {

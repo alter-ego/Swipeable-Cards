@@ -348,10 +348,11 @@ public class CardContainer extends AdapterView<CardStackAdapter> {
         switch (event.getActionMasked()) {
             case MotionEvent.ACTION_DOWN:
                 mTopCard.getHitRect(childRect);
+                Object model = getAdapter().getItem(0);
 
-                Object model = getAdapter().getItem(getChildCount() - 1);
                 if (model instanceof BaseCardModel) {
                     BaseCardModel baseCardModel = (BaseCardModel) model;
+
 
                     if (baseCardModel.getOnCardClickListener() != null) {
                         baseCardModel.getOnCardClickListener().OnClickListener();
@@ -463,7 +464,8 @@ public class CardContainer extends AdapterView<CardStackAdapter> {
         if (mTopCard != null)
             mTopCard.setLayerType(LAYER_TYPE_HARDWARE, null);
 
-        Object model = getAdapter().getItem(getChildCount() - 1);
+        Object model = getAdapter().getItem(0);
+
         if (model instanceof BaseCardModel) {
             BaseCardModel baseCardModel = (BaseCardModel) model;
 

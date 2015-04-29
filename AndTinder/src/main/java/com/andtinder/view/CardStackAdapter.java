@@ -14,6 +14,11 @@ import java.util.List;
 
 public abstract class CardStackAdapter extends BaseAdapter {
 
+    public interface AdapterEmptyEvent {
+	void onAdapterEmpty();
+	void onAdapterNotEmpty();
+    }
+
     private final Context mContext;
 
     /**
@@ -26,14 +31,18 @@ public abstract class CardStackAdapter extends BaseAdapter {
 
     private int mWrapperBackgroundResource = R.drawable.card_bg;
 
+    private AdapterEmptyEvent mAdapterEmptyEventListener;
+
     public CardStackAdapter(Context context) {
 	mContext = context;
 	mData = new LinkedList<>();
+	notifyAdapterEmptyEventListener();
     }
 
     public CardStackAdapter(Context context, Collection<Object> items) {
 	mContext = context;
 	mData = new LinkedList<Object>(items);
+	notifyAdapterEmptyEventListener();
     }
 
     @Override
@@ -82,6 +91,7 @@ public abstract class CardStackAdapter extends BaseAdapter {
 	    mData.add(item);
 	}
 	notifyDataSetChanged();
+	notifyAdapterEmptyEventListener();
     }
 
     public void addAll(List<Object> items) {
@@ -89,6 +99,7 @@ public abstract class CardStackAdapter extends BaseAdapter {
 	    mData.addAll(items);
 	}
 	notifyDataSetChanged();
+	notifyAdapterEmptyEventListener();
     }
 
     public Object pop() {
@@ -97,6 +108,7 @@ public abstract class CardStackAdapter extends BaseAdapter {
 	    model = mData.remove(mData.size() - 1);
 	}
 	notifyDataSetChanged();
+	notifyAdapterEmptyEventListener();
 	return model;
     }
 
@@ -132,5 +144,19 @@ public abstract class CardStackAdapter extends BaseAdapter {
 
     public void setWrapperBackgroundResource(int resourceId) {
 	mWrapperBackgroundResource = resourceId;
+    }
+
+    private void notifyAdapterEmptyEventListener() {
+	if (mAdapterEmptyEventListener == null)
+	    return;
+
+	if (mData != null && mData.size() > 0)
+	    mAdapterEmptyEventListener.onAdapterNotEmpty();
+	else
+	    mAdapterEmptyEventListener.onAdapterEmpty();
+    }
+
+    public void setAdapterEmptyEventListener(AdapterEmptyEvent listener) {
+	mAdapterEmptyEventListener = listener;
     }
 }

@@ -19,26 +19,20 @@ package com.andtinder.model;
 import com.andtinder.interfaces.OnCardClickListener;
 import com.andtinder.interfaces.OnCardDismissedListener;
 
+import lombok.Getter;
+import lombok.Setter;
+import lombok.experimental.Accessors;
+
+@Accessors(prefix = "m")
 public class BaseCardModel {
 
+    @Getter
+    @Setter
     private OnCardDismissedListener mOnCardDismissedListener = null;
 
+
+    @Getter
+    @Setter
     private OnCardClickListener mOnCardClickListener = null;
 
-    public void setOnCardDismissedListener(OnCardDismissedListener listener) {
-        mOnCardDismissedListener = listener;
-    }
-
-    public OnCardDismissedListener getOnCardDismissedListener() {
-        return mOnCardDismissedListener;
-    }
-
-
-    public void setOnCardClickListener(OnCardClickListener listener) {
-        mOnCardClickListener = listener;
-    }
-
-    public OnCardClickListener getOnCardClickListener() {
-        return mOnCardClickListener;
-    }
 }

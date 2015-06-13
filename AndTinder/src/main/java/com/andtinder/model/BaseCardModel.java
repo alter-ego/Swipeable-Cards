@@ -18,6 +18,7 @@ package com.andtinder.model;
 
 import com.andtinder.interfaces.OnCardClickListener;
 import com.andtinder.interfaces.OnCardDismissedListener;
+import com.andtinder.interfaces.OnCardSwipeListener;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -30,6 +31,9 @@ public class BaseCardModel {
     @Setter
     private OnCardDismissedListener mOnCardDismissedListener = null;
 
+    @Getter
+    @Setter
+    private OnCardSwipeListener mOnCardSwipeListener = null;
 
     @Getter
     @Setter

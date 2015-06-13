@@ -2,6 +2,7 @@ package com.andtinder.demo;
 
 import com.andtinder.interfaces.OnCardClickListener;
 import com.andtinder.interfaces.OnCardDismissedListener;
+import com.andtinder.interfaces.OnCardSwipeListener;
 import com.andtinder.view.BindableCardStackAdapter;
 
 import android.app.Activity;
@@ -56,6 +57,23 @@ public class DifferentCardBinder implements BindableCardStackAdapter.AdapterData
             @Override
             public void onDislike() {
                 Log.i("Swipeable Cards", "I dislike the card");
+            }
+        });
+
+        differentCard.setOnCardSwipeListener(new OnCardSwipeListener() {
+            @Override
+            public void onSwipeStopped() {
+                Log.i("Swipeable Cards", "Stopped swiping");
+            }
+
+            @Override
+            public void onSwipeStartedLike() {
+                Log.i("Swipeable Cards", "Started swiping to like");
+            }
+
+            @Override
+            public void onSwipeStartedDislike() {
+                Log.i("Swipeable Cards", "Started swiping to dislike");
             }
         });
 

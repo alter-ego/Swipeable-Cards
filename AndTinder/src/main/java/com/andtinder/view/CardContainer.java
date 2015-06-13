@@ -31,11 +31,17 @@ import android.widget.ListAdapter;
 import java.util.Random;
 
 public class CardContainer extends AdapterView<ListAdapter> {
+
     public static final int INVALID_POINTER_ID = -1;
+
     private int mActivePointerId = INVALID_POINTER_ID;
+
     private static final double DISORDERED_MAX_ROTATION_RADIANS = Math.PI / 64;
+
     private static final int MAX_VISIBLE_CARDS_DEFAULT = 5;
+
     private int mNumberOfCards = -1;
+
     private final DataSetObserver mDataSetObserver = new DataSetObserver() {
         @Override
         public void onChanged() {
@@ -50,23 +56,38 @@ public class CardContainer extends AdapterView<ListAdapter> {
             clearStack();
         }
     };
+
     private final Random mRandom = new Random();
+
     private final Rect boundsRect = new Rect();
+
     private final Rect childRect = new Rect();
+
     private final Matrix mMatrix = new Matrix();
 
     //TODO: determine max dynamically based on device speed
     private int mMaxVisible = MAX_VISIBLE_CARDS_DEFAULT;
+
     private GestureDetector mGestureDetector;
+
     private int mFlingSlop;
+
     private Orientation mOrientation;
+
     private ListAdapter mListAdapter;
+
     private float mLastTouchX;
+
     private float mLastTouchY;
+
     private View mTopCard;
+
     private int mTouchSlop;
+
     private int mGravity;
+
     private int mNextAdapterPosition;
+
     private boolean mDragging;
 
     public CardContainer(Context context) {
@@ -116,8 +137,9 @@ public class CardContainer extends AdapterView<ListAdapter> {
 
     @Override
     public void setAdapter(ListAdapter adapter) {
-        if (mListAdapter != null)
+        if (mListAdapter != null) {
             mListAdapter.unregisterDataSetObserver(mDataSetObserver);
+        }
 
         clearStack();
         mTopCard = null;
@@ -139,7 +161,7 @@ public class CardContainer extends AdapterView<ListAdapter> {
         while (mNextAdapterPosition < mListAdapter.getCount() && getChildCount() < mMaxVisible) {
             View view = mListAdapter.getView(mNextAdapterPosition, null, this);
             view.setLayerType(LAYER_TYPE_SOFTWARE, null);
-            if(mOrientation == Orientation.Disordered) {
+            if (mOrientation == Orientation.Disordered) {
                 view.setRotation(getDisorderedRotation());
             }
             addViewInLayout(view, 0, new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT,
@@ -162,17 +184,17 @@ public class CardContainer extends AdapterView<ListAdapter> {
     }
 
     public void setOrientation(Orientation orientation) {
-        if (orientation == null)
+        if (orientation == null) {
             throw new NullPointerException("Orientation may not be null");
-        if(mOrientation != orientation) {
+        }
+        if (mOrientation != orientation) {
             this.mOrientation = orientation;
-            if(orientation == Orientation.Disordered) {
+            if (orientation == Orientation.Disordered) {
                 for (int i = 0; i < getChildCount(); i++) {
                     View child = getChildAt(i);
                     child.setRotation(getDisorderedRotation());
                 }
-            }
-            else {
+            } else {
                 for (int i = 0; i < getChildCount(); i++) {
                     View child = getChildAt(i);
                     child.setRotation(0);
@@ -204,8 +226,10 @@ public class CardContainer extends AdapterView<ListAdapter> {
                 R1 = requestedWidth;
                 R2 = requestedHeight;
             }
-            childWidth = (int) ((R1 * Math.cos(DISORDERED_MAX_ROTATION_RADIANS) - R2 * Math.sin(DISORDERED_MAX_ROTATION_RADIANS)) / Math.cos(2 * DISORDERED_MAX_ROTATION_RADIANS));
-            childHeight = (int) ((R2 * Math.cos(DISORDERED_MAX_ROTATION_RADIANS) - R1 * Math.sin(DISORDERED_MAX_ROTATION_RADIANS)) / Math.cos(2 * DISORDERED_MAX_ROTATION_RADIANS));
+            childWidth = (int) ((R1 * Math.cos(DISORDERED_MAX_ROTATION_RADIANS) - R2 * Math.sin(DISORDERED_MAX_ROTATION_RADIANS)) / Math
+                    .cos(2 * DISORDERED_MAX_ROTATION_RADIANS));
+            childHeight = (int) ((R2 * Math.cos(DISORDERED_MAX_ROTATION_RADIANS) - R1 * Math.sin(DISORDERED_MAX_ROTATION_RADIANS)) / Math
+                    .cos(2 * DISORDERED_MAX_ROTATION_RADIANS));
         } else {
             childWidth = requestedWidth;
             childHeight = requestedHeight;
@@ -251,6 +275,14 @@ public class CardContainer extends AdapterView<ListAdapter> {
         final int pointerIndex;
         final float x, y;
         final float dx, dy;
+
+        Object model = getAdapter().getItem(getChildCount() - 1);
+        BaseCardModel baseCardModel = null;
+
+        if (model instanceof BaseCardModel) {
+            baseCardModel = (BaseCardModel) model;
+        }
+
         switch (event.getActionMasked()) {
             case MotionEvent.ACTION_DOWN:
                 mTopCard.getHitRect(childRect);
@@ -265,7 +297,6 @@ public class CardContainer extends AdapterView<ListAdapter> {
                 mLastTouchX = x;
                 mLastTouchY = y;
                 mActivePointerId = event.getPointerId(pointerIndex);
-
 
                 float[] points = new float[]{x - mTopCard.getLeft(), y - mTopCard.getTop()};
                 mTopCard.getMatrix().invert(mMatrix);
@@ -287,7 +318,7 @@ public class CardContainer extends AdapterView<ListAdapter> {
                     mDragging = true;
                 }
 
-                if(!mDragging) {
+                if (!mDragging) {
                     return true;
                 }
 
@@ -295,6 +326,16 @@ public class CardContainer extends AdapterView<ListAdapter> {
                 mTopCard.setTranslationY(mTopCard.getTranslationY() + dy);
 
                 mTopCard.setRotation(40 * mTopCard.getTranslationX() / (getWidth() / 2.f));
+
+                float currentTranslationX = mTopCard.getTranslationX();
+
+                if (baseCardModel != null && baseCardModel.getOnCardSwipeListener() != null) {
+                    if (currentTranslationX > 0) {
+                        baseCardModel.getOnCardSwipeListener().onSwipeStartedLike();
+                    } else {
+                        baseCardModel.getOnCardSwipeListener().onSwipeStartedDislike();
+                    }
+                }
 
                 mLastTouchX = x;
                 mLastTouchY = y;
@@ -315,6 +356,9 @@ public class CardContainer extends AdapterView<ListAdapter> {
                 ).setDuration(250);
                 animator.setInterpolator(new AccelerateInterpolator());
                 animator.start();
+                if (baseCardModel != null && baseCardModel.getOnCardSwipeListener() != null) {
+                    baseCardModel.getOnCardSwipeListener().onSwipeStopped();
+                }
                 break;
             case MotionEvent.ACTION_POINTER_UP:
                 pointerIndex = event.getActionIndex();
@@ -428,6 +472,7 @@ public class CardContainer extends AdapterView<ListAdapter> {
     }
 
     private class GestureListener extends SimpleOnGestureListener {
+
         @Override
         public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
             Log.d("Fling", "Fling with " + velocityX + ", " + velocityY);
@@ -450,8 +495,9 @@ public class CardContainer extends AdapterView<ListAdapter> {
 
                 likeOrDislike(targetX, targetY, Math.min(500, duration));
                 return true;
-            } else
+            } else {
                 return false;
+            }
         }
     }
 
@@ -459,8 +505,9 @@ public class CardContainer extends AdapterView<ListAdapter> {
         final View topCard = mTopCard;
         mTopCard = getChildAt(getChildCount() - 2);
 
-        if (mTopCard != null)
+        if (mTopCard != null) {
             mTopCard.setLayerType(LAYER_TYPE_HARDWARE, null);
+        }
 
         Object model = getAdapter().getItem(getChildCount() - 1);
         if (model instanceof BaseCardModel) {

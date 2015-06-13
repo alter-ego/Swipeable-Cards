@@ -26,11 +26,10 @@ import android.view.ViewGroup;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.LinearInterpolator;
 import android.widget.AdapterView;
-import android.widget.ListAdapter;
 
 import java.util.Random;
 
-public class CardContainer extends AdapterView<ListAdapter> {
+public class CardContainer extends AdapterView<CardStackAdapter> {
 
     public static final int INVALID_POINTER_ID = -1;
 
@@ -74,7 +73,7 @@ public class CardContainer extends AdapterView<ListAdapter> {
 
     private Orientation mOrientation;
 
-    private ListAdapter mListAdapter;
+    private CardStackAdapter mListAdapter;
 
     private float mLastTouchX;
 
@@ -89,6 +88,10 @@ public class CardContainer extends AdapterView<ListAdapter> {
     private int mNextAdapterPosition;
 
     private boolean mDragging;
+
+    private int mChildWidth;
+
+    private int mChildHeight;
 
     public CardContainer(Context context) {
         super(context);
@@ -131,28 +134,22 @@ public class CardContainer extends AdapterView<ListAdapter> {
     }
 
     @Override
-    public ListAdapter getAdapter() {
+    public CardStackAdapter getAdapter() {
         return mListAdapter;
     }
 
     @Override
-    public void setAdapter(ListAdapter adapter) {
+    public void setAdapter(CardStackAdapter adapter) {
         if (mListAdapter != null) {
             mListAdapter.unregisterDataSetObserver(mDataSetObserver);
         }
 
         clearStack();
-        mTopCard = null;
+
         mListAdapter = adapter;
-        mNextAdapterPosition = 0;
         adapter.registerDataSetObserver(mDataSetObserver);
 
         ensureFull();
-
-        if (getChildCount() != 0) {
-            mTopCard = getChildAt(getChildCount() - 1);
-            mTopCard.setLayerType(LAYER_TYPE_HARDWARE, null);
-        }
         mNumberOfCards = getAdapter().getCount();
         requestLayout();
     }
@@ -170,6 +167,11 @@ public class CardContainer extends AdapterView<ListAdapter> {
             requestLayout();
 
             mNextAdapterPosition += 1;
+        }
+
+        if (getChildCount() != 0) {
+            mTopCard = getChildAt(getChildCount() - 1);
+            mTopCard.setLayerType(LAYER_TYPE_HARDWARE, null);
         }
     }
 
@@ -215,7 +217,6 @@ public class CardContainer extends AdapterView<ListAdapter> {
 
         int requestedWidth = getMeasuredWidth() - getPaddingLeft() - getPaddingRight();
         int requestedHeight = getMeasuredHeight() - getPaddingTop() - getPaddingBottom();
-        int childWidth, childHeight;
 
         if (mOrientation == Orientation.Disordered) {
             int R1, R2;
@@ -226,18 +227,19 @@ public class CardContainer extends AdapterView<ListAdapter> {
                 R1 = requestedWidth;
                 R2 = requestedHeight;
             }
-            childWidth = (int) ((R1 * Math.cos(DISORDERED_MAX_ROTATION_RADIANS) - R2 * Math.sin(DISORDERED_MAX_ROTATION_RADIANS)) / Math
+
+            mChildWidth = (int) ((R1 * Math.cos(DISORDERED_MAX_ROTATION_RADIANS) - R2 * Math.sin(DISORDERED_MAX_ROTATION_RADIANS)) / Math
                     .cos(2 * DISORDERED_MAX_ROTATION_RADIANS));
-            childHeight = (int) ((R2 * Math.cos(DISORDERED_MAX_ROTATION_RADIANS) - R1 * Math.sin(DISORDERED_MAX_ROTATION_RADIANS)) / Math
+            mChildHeight = (int) ((R2 * Math.cos(DISORDERED_MAX_ROTATION_RADIANS) - R1 * Math.sin(DISORDERED_MAX_ROTATION_RADIANS)) / Math
                     .cos(2 * DISORDERED_MAX_ROTATION_RADIANS));
         } else {
-            childWidth = requestedWidth;
-            childHeight = requestedHeight;
+            mChildWidth = requestedWidth;
+            mChildHeight = requestedHeight;
         }
 
         int childWidthMeasureSpec, childHeightMeasureSpec;
-        childWidthMeasureSpec = MeasureSpec.makeMeasureSpec(childWidth, MeasureSpec.AT_MOST);
-        childHeightMeasureSpec = MeasureSpec.makeMeasureSpec(childHeight, MeasureSpec.AT_MOST);
+        childWidthMeasureSpec = MeasureSpec.makeMeasureSpec(mChildWidth, MeasureSpec.AT_MOST);
+        childHeightMeasureSpec = MeasureSpec.makeMeasureSpec(mChildHeight, MeasureSpec.AT_MOST);
 
         for (int i = 0; i < getChildCount(); i++) {
             View child = getChildAt(i);
@@ -271,7 +273,7 @@ public class CardContainer extends AdapterView<ListAdapter> {
         if (mGestureDetector.onTouchEvent(event)) {
             return true;
         }
-        Log.d("Touch Event", MotionEvent.actionToString(event.getActionMasked()) + " ");
+//        Log.d("Touch Event", MotionEvent.actionToString(event.getActionMasked()) + " ");
         final int pointerIndex;
         final float x, y;
         final float dx, dy;
@@ -391,8 +393,8 @@ public class CardContainer extends AdapterView<ListAdapter> {
         switch (event.getActionMasked()) {
             case MotionEvent.ACTION_DOWN:
                 mTopCard.getHitRect(childRect);
+                Object model = getAdapter().getItem(0);
 
-                Object model = getAdapter().getItem(getChildCount() - 1);
                 if (model instanceof BaseCardModel) {
                     BaseCardModel baseCardModel = (BaseCardModel) model;
 
@@ -499,6 +501,7 @@ public class CardContainer extends AdapterView<ListAdapter> {
                 return false;
             }
         }
+
     }
 
     private void likeOrDislike(float targetX, float targetY, long duration) {
@@ -509,7 +512,8 @@ public class CardContainer extends AdapterView<ListAdapter> {
             mTopCard.setLayerType(LAYER_TYPE_HARDWARE, null);
         }
 
-        Object model = getAdapter().getItem(getChildCount() - 1);
+        Object model = getAdapter().getItem(0);
+
         if (model instanceof BaseCardModel) {
             BaseCardModel baseCardModel = (BaseCardModel) model;
 
@@ -533,7 +537,7 @@ public class CardContainer extends AdapterView<ListAdapter> {
                     @Override
                     public void onAnimationEnd(Animator animation) {
                         removeViewInLayout(topCard);
-                        ensureFull();
+                        getAdapter().pop();
                     }
 
                     @Override
@@ -544,11 +548,11 @@ public class CardContainer extends AdapterView<ListAdapter> {
     }
 
     public void like() {
-        likeOrDislike(mTopCard.getWidth(), mTopCard.getY(), 500);
+        likeOrDislike(mChildWidth, 0, 500);
     }
 
     public void dislike() {
-        likeOrDislike(-mTopCard.getWidth(), mTopCard.getY(), 500);
+        likeOrDislike(-mChildWidth, 0, 500);
     }
 
     public void setMaxVisible(int maxVisible) {

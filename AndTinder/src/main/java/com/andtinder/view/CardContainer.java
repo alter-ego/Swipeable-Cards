@@ -278,7 +278,7 @@ public class CardContainer extends AdapterView<CardStackAdapter> {
         final float x, y;
         final float dx, dy;
 
-        Object model = getAdapter().getItem(getChildCount() - 1);
+        Object model = getAdapter().getItem(0);
         BaseCardModel baseCardModel = null;
 
         if (model instanceof BaseCardModel) {
